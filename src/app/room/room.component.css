@@ -1,0 +1,67 @@
+.room {
+    width: 125vh;
+    height: 75vh;
+    border: 8px solid #141414;
+    position: relative;
+
+}
+
+/* Chatroom input */
+.chat_box {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    margin-bottom: 10px;
+}
+
+.chat_box > .chat_input {
+    width: 70%;
+    height: fit-content;
+    border-radius: 10px;
+    padding-left:15px;
+}
+
+/* Buttons */
+
+.chat_box > .fas {
+    font-size: 20px;
+}
+
+
+.fas  {
+    background-color: #e9ecef;
+    margin-right: 5px;
+}
+
+
+.chat_box > .fas:hover{
+    background-color: black;
+    color: white;
+}
+
+/* Header */
+.room_info > p {
+    font-size: x-large;
+}
+
+/* Chat message scrollable */
+.messages_list {
+    top: 0;
+    height: 80%;
+    position: relative;
+    overflow-y: scroll;
+}
+
+/* Message styling */
+.message {
+    border-radius: 20px;
+    height: fit-content;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #E9ECF3;
+}
+
+.message_box {
+    display: flex;
+}

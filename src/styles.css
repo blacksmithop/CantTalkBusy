@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Button cursor */
+
+.btn {
+    cursor: pointer;
+}
+
+li { /* styles all li elements*/
+    list-style-type: none;
+}

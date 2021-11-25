@@ -1,0 +1,38 @@
+<div class="container-fluid room">
+    <!--Room info-->
+    <div class="room_info">
+        <p class="text-center">{{roomName}}</p>
+    </div>
+    <!--Message list-->
+    <div class="messages_list">
+        <ul class="list-group" *ngFor="let msg of messages">
+            <div class="container message_box">
+                <div class="btn-group" dropdown>
+                    <button id="button-basic" dropdownToggle type="button" class="btn" aria-controls="dropdown-basic">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
+                        aria-labelledby="button-basic">
+                        <li role="menuitem"><a class="btn dropdown-item">Message</a></li>
+                        <li role="menuitem"><a class="btn dropdown-item">Forward</a></li>
+                    </ul>
+                </div>
+                <li class="text-right message" *ngIf="msg.author">{{msg.body}}
+                </li>
+                <li class="text-left message" *ngIf="!msg.author">{{msg.body}}
+                </li>
+
+            </div>
+
+
+        </ul>
+    </div>
+
+    <div class="chat_box">
+        <input type="text" class="chat_input mr-2" [formControl]="chatMessage">
+        <!--Send-->
+        <i class="btn fas fa-paper-plane rounded-circle text-danger" (click)="sendMessage()"></i>
+        <!--image upload-->
+        <i class="btn fas fa-images text-success rounded-circle"></i>
+    </div>
+</div>
