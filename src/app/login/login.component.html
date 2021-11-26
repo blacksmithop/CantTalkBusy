@@ -4,11 +4,25 @@
     <div class="display-4">
         <p class="title">Login <i class="far fa-user text-danger"></i></p>
     </div>
-    <input type="text" class="text-dark text-center" placeholder="Enter username">
-    <p ngxErrors="username" class="text-muted">Username is <span class="text-danger">required</span></p>
+    <form action="" [formGroup]="loginForm">
+        <div class="row">
+            <div class="col">
+                <input formControlName="username" type="text" class="text-dark text-center" name="username"
+                    placeholder="Enter username">
+                <p *ngIf="loginForm.get('username')!.errors?.required" class="text-muted">Username is <span
+                        class="text-danger">required</span></p>
+                <p *ngIf="!loginForm.get('username')!.errors?.required" class="text-muted">Username is <span
+                        class="text-success">valid</span></p>
+            </div>
+        </div>
+        <input type="password" class="text-dark text-center" name="password" formControlName="password"
+            placeholder="Enter password">
+        <p *ngIf="loginForm.get('password')!.errors?.required" class="text-muted">Password must be <span
+                class="text-danger">alphanumeric</span></p>
+        <p *ngIf="!loginForm.get('password')!.errors?.required" class="text-muted">Password is <span
+                class="text-success">accepted</span></p>
 
-    <input type="password" class="text-dark text-center" placeholder="Enter password">
-    <p ngxErrors="password" class="text-muted"></p>
-    <i class="fas fa-plug text-success"></i>
+    </form>
+    <i class="btn fas fa-plug text-success" (click)="login()"></i>
 
 </div>

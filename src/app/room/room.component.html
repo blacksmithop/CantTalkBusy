@@ -1,7 +1,7 @@
-<div class="container-fluid room">
+<div class="container-fluid room bg-dark">
     <!--Room info-->
     <div class="room_info">
-        <p class="text-center">{{roomName}}</p>
+        <p class="text-center room-name">Room: {{roomName}}</p>
     </div>
     <!--Message list-->
     <div class="messages_list">
@@ -12,15 +12,15 @@
                         <i class="fas fa-bars"></i>
                     </button>
                     <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu bg-dark" role="menu">
-                        <li role="menuitem"><a class="dropdown-item">Message</a></li>
-                        <li role="menuitem"><a class="dropdown-item">Forward</a></li>
+                        <li role="menuitem"><a class="btn dropdown-item">Message</a></li>
+                        <li role="menuitem"><a class="btn dropdown-item">Forward</a></li>
                     </ul>
                 </div>
                 <li class="text-right message bg-success" *ngIf="msg.author">{{msg.body}}
                 </li>
                 <li class="text-left message bg-danger" *ngIf="!msg.author">{{msg.body}}
                 </li>
-
+                <p class="ml-2 text-light">{{msg.time | date:'shortTime'}}</p>
             </div>
 
 
@@ -28,7 +28,7 @@
     </div>
 
     <div class="chat_box">
-        <input type="text" class="chat_input mr-2" [formControl]="chatMessage">
+        <input type="text" class="chat_input mr-2" [formControl]="chatMessage" (keydown)="onEnterPress($event)">
         <!--Send-->
         <i class="btn fas fa-paper-plane rounded-circle text-danger" (click)="sendMessage()"></i>
         <!--image upload-->

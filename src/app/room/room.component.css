@@ -6,6 +6,16 @@
 
 }
 
+.room-name {
+    text-transform: capitalize;
+    font-size: 30px;
+}
+.room_info {
+    width: 100%;
+    color: white;
+    border-bottom: 5px solid #141414;
+    margin-bottom: 10px;
+}
 /* Chatroom input */
 .chat_box {
     position: absolute;
@@ -39,10 +49,7 @@
     color: white;
 }
 
-/* Header */
-.room_info > p {
-    font-size: x-large;
-}
+
 
 /* Chat message scrollable */
 .messages_list {
@@ -79,3 +86,7 @@
     outline: none;
 }
 
+/* Hover */
+.btn:hover{
+    color: black;
+}

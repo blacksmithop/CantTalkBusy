@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsDropdownConfig } from 'ngx-bootstrap/dropdown';
 import { FormControl, Validators } from '@angular/forms';
 import { ChatRoomService } from '../chat-room.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-room',
@@ -19,15 +20,26 @@ export class RoomComponent implements OnInit {
 
   chatMessage = new FormControl('', [Validators.maxLength(100), Validators.required]);
   messages = [{
-    body: 'Hello', author: false, system: false
+    body: 'Hello', author: false, system: false, time: new Date()
   }]
-  constructor(private Api: ChatRoomService) {
-    this.roomName = 'Room 1';
+  constructor(private Api: ChatRoomService,
+    private route: ActivatedRoute) {
+    this.roomName = this.route.snapshot.paramMap.get('roomName')!;
+
+  }
+
+  onEnterPress(event: any) {
+    if (event.key === "Enter") {
+      this.sendMessage();
+    }
   }
 
   sendMessage() {
     if (this.chatMessage.valid) {
-      this.messages.push({ body: this.chatMessage.value, author: true, system: false });
+      this.messages.push({
+        body: this.chatMessage.value, author: true,
+        system: false, time: new Date()
+      });
       this.Api.sendMessage(this.chatMessage.value);
       this.chatMessage.reset();
     }
@@ -41,7 +53,9 @@ export class RoomComponent implements OnInit {
     // Get messages from server
     this.Api.OnRoomMessage().subscribe((data: any) =>
       this.messages.push({
-        body: data, author: false, system: false
+        body: data,
+        author: false, system: false,
+        time: new Date()
       }));
 
     // Get list of active users

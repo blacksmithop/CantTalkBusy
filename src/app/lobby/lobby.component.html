@@ -3,7 +3,7 @@
         <div class="col">
             <!--Contact box-->
             <div class="container-fluid person-list">
-                <i class="fas fa-comments"></i>
+                <i class="fas fa-comments text-success"></i>
                 <!--contact list-->
                 <div class="row" *ngFor="let chat of chats">
                     <div class="col">
@@ -15,14 +15,14 @@
                                 <p class="person-name">{{chat.lname}}</p>
                                 <!-- Contact options-->
                                 <div class="btn-group" dropdown>
-                                    <button id="button-basic" dropdownToggle type="button" class="btn "
+                                    <button id="button-basic" dropdownToggle type="button" class="btn"
                                         aria-controls="dropdown-basic">
                                         <i class="fas fa-bars text-light"></i><span class="caret"></span>
                                     </button>
                                     <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
                                         aria-labelledby="button-basic">
-                                        <li role="menuitem"><a class="dropdown-item" href="#">Chat</a></li>
-                                        <li role="menuitem"><a class="dropdown-item" href="#">Block</a></li>
+                                        <li role="menuitem"><a class="btn dropdown-item" href="#">Chat</a></li>
+                                        <li role="menuitem"><a class="btn dropdown-item" href="#">Block</a></li>
                                     </ul>
                                 </div>
                             </div>
