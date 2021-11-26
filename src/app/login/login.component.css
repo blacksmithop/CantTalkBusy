@@ -1,0 +1,22 @@
+.container {
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 30px;
+}
+
+input {
+    height: 6vh;
+    width: auto;
+    font-size: large;
+    border-radius: 30px;
+}
+
+.fa-plug {
+    margin-top: 10vh;
+    display: block;
+    font-size: 50px;
+}
+
+.fa-plug:hover {
+    transform: scale(1.5);
+}

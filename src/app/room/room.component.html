@@ -6,20 +6,19 @@
     <!--Message list-->
     <div class="messages_list">
         <ul class="list-group" *ngFor="let msg of messages">
-            <div class="container message_box">
+            <div class="container message_box" *ngIf="!msg.system">
                 <div class="btn-group" dropdown>
                     <button id="button-basic" dropdownToggle type="button" class="btn" aria-controls="dropdown-basic">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
-                        aria-labelledby="button-basic">
-                        <li role="menuitem"><a class="btn dropdown-item">Message</a></li>
-                        <li role="menuitem"><a class="btn dropdown-item">Forward</a></li>
+                    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu bg-dark" role="menu">
+                        <li role="menuitem"><a class="dropdown-item">Message</a></li>
+                        <li role="menuitem"><a class="dropdown-item">Forward</a></li>
                     </ul>
                 </div>
-                <li class="text-right message" *ngIf="msg.author">{{msg.body}}
+                <li class="text-right message bg-success" *ngIf="msg.author">{{msg.body}}
                 </li>
-                <li class="text-left message" *ngIf="!msg.author">{{msg.body}}
+                <li class="text-left message bg-danger" *ngIf="!msg.author">{{msg.body}}
                 </li>
 
             </div>

@@ -13,6 +13,7 @@ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 //Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -20,7 +21,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
   declarations: [
     AppComponent,
     LobbyComponent,
-    RoomComponent
+    RoomComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

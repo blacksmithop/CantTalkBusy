@@ -1,28 +1,39 @@
 import { Injectable } from '@angular/core';
-import { Message } from './message';
 import { Socket } from 'ngx-socket-io';
-import { Observable } from 'rxjs/internal/Observable';
-import { FormBuilder, FormGroup } from '@angular/forms';
-
+//import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatRoomService {
-  constructor(private socket: Socket,
-    private formBuilder: FormBuilder) { }
+  constructor(private socket: Socket) { }
+  id: string = '';
 
+  getIdentity() {
+    this.socket.emit('whoami');
 
-  public sendMessage(message: Message) {
-    this.socket.emit('new-message', message);
+    return this.socket.fromEvent('socket-id');
+
   }
 
-  public getMessages = () => {
-    return new Observable((observer) => {
-      this.socket.on('new-message', (message: Message) => {
-        observer.next(message);
-      });
-    });
+  listUsers() {
+    this.socket.emit('list users');
+
+    return this.socket.fromEvent('users-list');
   }
+
+  OnRoomMessage() {
+    return this.socket.fromEvent('room message');
+  }
+
+  OnSystemMessage() {
+    return this.socket.fromEvent('system message');
+  }
+
+  public sendMessage(message: string) {
+    this.socket.emit('send message', message);
+  }
+
+
 }
 

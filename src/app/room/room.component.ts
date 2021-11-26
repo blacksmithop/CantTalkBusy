@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsDropdownConfig } from 'ngx-bootstrap/dropdown';
 import { FormControl, Validators } from '@angular/forms';
-import { DOCUMENT } from '@angular/common';
+import { ChatRoomService } from '../chat-room.service';
 
 @Component({
   selector: 'app-room',
@@ -10,24 +10,46 @@ import { DOCUMENT } from '@angular/common';
   providers: [{ provide: BsDropdownConfig, useValue: { isAnimated: true, autoClose: true } }]
 })
 export class RoomComponent implements OnInit {
+  // name of room
   roomName: string;
+  // client's socket id
+  socketId: string = '';;
+  // list of users in room
+  users: string[] = [];
+
   chatMessage = new FormControl('', [Validators.maxLength(100), Validators.required]);
   messages = [{
-    body: 'Hello', author: false
+    body: 'Hello', author: false, system: false
   }]
-  constructor() {
+  constructor(private Api: ChatRoomService) {
     this.roomName = 'Room 1';
   }
 
   sendMessage() {
     if (this.chatMessage.valid) {
-      console.log(this.chatMessage.value);
-      this.messages.push({ body: this.chatMessage.value, author: true });
-
+      this.messages.push({ body: this.chatMessage.value, author: true, system: false });
+      this.Api.sendMessage(this.chatMessage.value);
       this.chatMessage.reset();
     }
   }
   ngOnInit(): void {
+    // Get your socket id
+    this.Api.getIdentity().subscribe((id: any) => {
+      this.socketId = id;
+    });
+
+    // Get messages from server
+    this.Api.OnRoomMessage().subscribe((data: any) =>
+      this.messages.push({
+        body: data, author: false, system: false
+      }));
+
+    // Get list of active users
+    this.Api.listUsers().subscribe((users: any) => {
+      this.users = users;
+      console.log(this.users);
+    });
 
   }
+
 }
