@@ -1,10 +1,10 @@
-<div class="container text-center">
+<div #login class="container text-center">
     <i class="fas fa-comments display-1 text-success"></i>
     <p class="display-3 ">Can't Talk Busy</p>
     <div class="display-4">
-        <p class="title">Login <i class="far fa-user text-danger"></i></p>
+        <p class="title">Login <i class="fas fa-user-lock text-danger"></i></p>
     </div>
-    <form action="" [formGroup]="loginForm">
+    <form [formGroup]="loginForm">
         <div class="row">
             <div class="col">
                 <input formControlName="username" type="text" class="text-dark text-center" name="username"
@@ -22,7 +22,84 @@
         <p *ngIf="!loginForm.get('password')!.errors?.required" class="text-muted">Password is <span
                 class="text-success">accepted</span></p>
 
+        <p class="text-muted" (click)="showRegister()">Click to <span class="text-primary new_account">register</span>
+        </p>
+        <button class="btn fas fa-plug text-success mx-auto" (click)="onLogin()" [disabled]="!loginForm.valid"></button>
     </form>
-    <i class="btn fas fa-plug text-success" (click)="login()"></i>
+</div>
 
+<div #register class="container text-center d-none">
+    <i class="fas fa-comments display-1 text-success"></i>
+    <p class="display-3 ">Can't Talk Busy</p>
+    <div class="display-4">
+        <p class="title">Signup <i class="far fa-user text-success"></i></p>
+    </div>
+    <form [formGroup]="registerForm">
+        <div class="row row-cols-1">
+            <div class="col">
+                <input formControlName="username" type="text" class="text-dark text-center" name="username"
+                    placeholder="Enter username">
+                <p *ngIf="registerForm.get('username')!.errors?.required" class="text-muted">Username must be <span
+                        class="text-danger">unique</span></p>
+                <p *ngIf="!registerForm.get('username')!.errors?.required" class="text-muted">Username is <span
+                        class="text-success">accepted</span></p>
+            </div>
+            <div class="col">
+                <input formControlName="firstName" type="text" class="text-dark text-center" name="firstName"
+                    placeholder="Enter first name">
+                <p *ngIf="registerForm.get('firstName')!.errors?.required" class="text-muted">First Name is <span
+                        class="text-danger">required</span></p>
+                <p *ngIf="!registerForm.get('firstName')!.errors?.required" class="text-muted">First Name is <span
+                        class="text-success">valid</span></p>
+            </div>
+            <div class="col">
+
+                <input formControlName="lastName" type="text" class="text-dark text-center" name="lastName"
+                    placeholder="Enter last name">
+                <p *ngIf="registerForm.get('lastName')!.errors?.required" class="text-muted">Last Name is <span
+                        class="text-danger">required</span></p>
+                <p *ngIf="!registerForm.get('lastName')!.errors?.required" class="text-muted">Last Name is <span
+                        class="text-success">valid</span></p>
+            </div>
+            <!--Password hint-->
+            <div class="col hint-text">
+                <p class="text-muted">Password must contain <br>
+                    <span class="text-success">Numbers </span>,
+                    <span class="text-warning">Lowercase</span>,
+                    <span class="text-danger">Uppercase</span>,
+                    and
+                    <span class="text-primary">Special Characters</span>.
+                </p>
+            </div>
+
+            <div class="col">
+                <input type="password" class="text-dark text-center" name="password" formControlName="password"
+                    placeholder="Enter password">
+                <p *ngIf="registerForm.get('password')!.hasError('required')" class="text-muted">Password is <span
+                        class="text-danger">required</span></p>
+                <p *ngIf="registerForm.get('password')!.errors?.minlength" class="text-muted">Password must be atleast
+                    <span class="text-danger">8 </span>characters long
+                </p>
+                <p *ngIf="passwordValidator()" class="text-muted">Password is <span class="text-success">valid</span>
+                </p>
+            </div>
+            <div class="col">
+
+                <input type="password" class="text-dark text-center" name="password2" formControlName="password2"
+                    placeholder="Repeat password">
+                <p *ngIf="!passwordMatch()" class="text-muted">
+                    Passwords must <span class="text-danger">match</span></p>
+                <p *ngIf="passwordMatch()" class="text-muted">
+                    Passwords <span class="text-success">match</span></p>
+                <p *ngIf="passwordValidator() && passwordMatch()" class="text-muted">Password is <span
+                        class="text-success">accepted</span>
+                </p>
+            </div>
+            <p class="text-muted" (click)="showLogin()">Click to <span class="text-primary new_account">Login</span></p>
+
+            <button class="btn fas fa-plug text-success mx-auto" (click)="onRegister()"
+                [disabled]="!registerForm.valid"></button>
+        </div>
+
+    </form>
 </div>

@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 export class RoomComponent implements OnInit {
   // name of room
   roomName: string;
+  myId!: string;
   // client's socket id
   socketId: string = '';;
   // list of users in room
@@ -20,12 +21,16 @@ export class RoomComponent implements OnInit {
 
   chatMessage = new FormControl('', [Validators.maxLength(100), Validators.required]);
   messages = [{
-    body: 'Hello', author: false, system: false, time: new Date()
+    body: 'Hello', author: 'socket_id', system: false, time: new Date()
   }]
   constructor(private Api: ChatRoomService,
     private route: ActivatedRoute) {
     this.roomName = this.route.snapshot.paramMap.get('roomName')!;
 
+    this.Api.getIdentity().subscribe((id: any) => {
+      // get your Id
+      this.myId = id;
+    });
   }
 
   onEnterPress(event: any) {
@@ -37,7 +42,7 @@ export class RoomComponent implements OnInit {
   sendMessage() {
     if (this.chatMessage.valid) {
       this.messages.push({
-        body: this.chatMessage.value, author: true,
+        body: this.chatMessage.value, author: this.myId,
         system: false, time: new Date()
       });
       this.Api.sendMessage(this.chatMessage.value);
@@ -51,12 +56,14 @@ export class RoomComponent implements OnInit {
     });
 
     // Get messages from server
-    this.Api.OnRoomMessage().subscribe((data: any) =>
+    this.Api.OnRoomMessage().subscribe((data: any) => {
+      console.log(data);
       this.messages.push({
-        body: data,
-        author: false, system: false,
+        body: data.msg,
+        author: data.author, system: false,
         time: new Date()
-      }));
+      });
+    });
 
     // Get list of active users
     this.Api.listUsers().subscribe((users: any) => {

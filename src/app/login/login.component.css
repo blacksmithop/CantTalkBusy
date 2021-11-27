@@ -12,11 +12,21 @@ input {
 }
 
 .fa-plug {
-    margin-top: 5vh;
-    display: block;
     font-size: 50px;
 }
 
 .fa-plug:hover {
     transform: scale(1.5);
+}
+
+/* Register */
+.new_account:hover {
+    font-size: large;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+/* Hint */
+.hint-text{
+    display: inline-block;
 }

@@ -11,9 +11,7 @@ export class ChatRoomService {
 
   getIdentity() {
     this.socket.emit('whoami');
-
     return this.socket.fromEvent('socket-id');
-
   }
 
   listUsers() {

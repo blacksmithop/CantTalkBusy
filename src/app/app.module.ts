@@ -11,6 +11,12 @@ import { RoomComponent } from './room/room.component';
 //Socket io
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
+//Http
+import { HttpClientModule } from '@angular/common/http';
+
+//Toastr
+import { ToastrModule } from 'ngx-toastr';
+
 //Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
@@ -30,9 +36,11 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     BrowserModule,
     AppRoutingModule,
     SocketIoModule.forRoot(config),
+    HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    ToastrModule.forRoot(),
     BsDropdownModule.forRoot()
   ],
   providers: [],

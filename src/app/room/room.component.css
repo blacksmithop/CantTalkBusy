@@ -3,7 +3,6 @@
     height: 75vh;
     border: 8px solid #141414;
     position: relative;
-
 }
 
 .room-name {
@@ -84,6 +83,7 @@
 
 .dropdown-menu {
     outline: none;
+    background-color: black;
 }
 
 /* Hover */
