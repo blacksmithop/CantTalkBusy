@@ -37,17 +37,35 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  passwordValidator() {
+  passwordValidator(form: any) {
     let upperCaseCharacters = /[A-Z]+/g;
     let lowerCaseCharacters = /[a-z]+/g;
     let numberCharacters = /[0-9]+/g;
     let specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
-    let value = this.registerForm.get('password')!.value;
+    let value = form.get('password')!.value;
 
     return (value.match(upperCaseCharacters) && value.match(lowerCaseCharacters) && value.match(numberCharacters) && value.match(specialCharacters));
   }
 
+  usernameUnique() {
+    const uname = this.registerForm.get('username')!.value;
+    console.log(uname)
+    let unique = true;
+    this.http.get(`http://localhost:3000/unique/username/${uname}`).subscribe(
+      (response) => {
+        console.log(response)                        //Next callback
+        this.toastr.success('Username is valid!');
+      },
+      (error) => {
+        console.log(error)                //Error callback
+        this.toastr.warning('Username is already taken');
+        unique = false;
+      }
+    )
+    return unique;
+
+  }
   passwordMatch() {
     if (!(this.registerForm.get('password')!.value === '' && this.registerForm.get('password2')!.value === '')) {
       return this.registerForm.get('password')!.value == this.registerForm.get('password2')!.value
@@ -58,17 +76,35 @@ export class LoginComponent implements OnInit {
   }
 
   onRegister() {
+    if (this.usernameUnique() && this.passwordMatch()) {
+      this.http.post('http://localhost:3000/signup', this.registerForm.value).subscribe(
+        (response: any) => {
+          //Next callback
+          this.toastr.success('Registration Successful!');
+          this.showLogin();
+        },
+        (error: any) => {
+          this.toastr.success(error.message);
+          this.toastr.warning('Could not register account')                          //Error callback
+        }
+      )
+    }
   }
 
   onLogin() {
-    this.http.get('http://localhost:3000/').subscribe(
-      (response) => {                           //Next callback
-        this.toastr.success('Welcome back!', 'Connected to General');
+    this.http.post('http://localhost:3000/login', this.loginForm.value).subscribe(
+      (response: any) => {
+        //Next callback
+        this.toastr.success(response.message);
 
-        this.router.navigate(['/home/general']);
+        sessionStorage.setItem('session', JSON.stringify(response.data));
+
+        this.toastr.success('Welcome back!', 'Connected to General');
+        this.router.navigate(['/room/general']);
       },
-      (error) => {                              //Error callback
-        this.toastr.warning('No internet connection!');
+      (error: any) => {
+        console.log(error)
+        this.toastr.warning(error.error.message);
       }
     )
   }

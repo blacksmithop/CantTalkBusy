@@ -14,24 +14,43 @@ export class ChatRoomService {
     return this.socket.fromEvent('socket-id');
   }
 
-  listUsers() {
-    this.socket.emit('list users');
-
-    return this.socket.fromEvent('users-list');
+  setIdentity(room_name: string) {
+    const session = JSON.parse(sessionStorage.getItem('session')!);
+    session.room_name = room_name;
+    this.socket.emit('set-identity', session);
   }
 
+  // new message in room, (system messages handled in frontend)
   OnRoomMessage() {
     return this.socket.fromEvent('room message');
   }
 
-  OnSystemMessage() {
-    return this.socket.fromEvent('system message');
+  joinRoom(room_name: string) {
+    this.socket.emit('join room', room_name);
   }
 
-  public sendMessage(message: string) {
+  listRooms() {
+    return this.socket.fromEvent('list rooms');
+  }
+
+  /* system messages from server
+  OnSystemMessage() {
+    return this.socket.fromEvent('system message');
+  }*/
+
+  // send message to room
+  sendMessage(message: string) {
     this.socket.emit('send message', message);
   }
 
+  // User events
+  OnUserJoined() {
+    return this.socket.fromEvent('user join');
+  }
+
+  OnUserLeft() {
+    return this.socket.fromEvent('user leave');
+  }
 
 }
 

@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LobbyComponent } from './lobby/lobby.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { RoomComponent } from './room/room.component';
 
@@ -20,17 +19,15 @@ import { ToastrModule } from 'ngx-toastr';
 //Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
 @NgModule({
   declarations: [
     AppComponent,
-    LobbyComponent,
     RoomComponent,
     LoginComponent,
-    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +38,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    ModalModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

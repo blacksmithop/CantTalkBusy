@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { BsDropdownConfig } from 'ngx-bootstrap/dropdown';
 import { FormControl, Validators } from '@angular/forms';
 import { ChatRoomService } from '../chat-room.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { ToastrService } from 'ngx-toastr';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-room',
@@ -12,19 +15,33 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class RoomComponent implements OnInit {
   // name of room
-  roomName: string;
+  @Input() roomName!: string;
+
+  @Input() roomList!: [];
+
   myId!: string;
-  // client's socket id
-  socketId: string = '';;
   // list of users in room
-  users: string[] = [];
+  users: any[] = [];
+  // Create room Modal
+  modalRef?: BsModalRef;
+  // Create room input
+  @Input() newRoomName!: string;
+  // File upload
+  fileToUpload: File | null = null;
 
   chatMessage = new FormControl('', [Validators.maxLength(100), Validators.required]);
   messages = [{
-    body: 'Hello', author: 'socket_id', system: false, time: new Date()
+    body: `Welcome!`, author: 'socket_id', system: false, time: new Date(),
+    user: {
+      username: 'System',
+    }
   }]
   constructor(private Api: ChatRoomService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private router: Router,
+    private modalService: BsModalService,
+    private http: HttpClient,
+    private toastr: ToastrService) {
     this.roomName = this.route.snapshot.paramMap.get('roomName')!;
 
     this.Api.getIdentity().subscribe((id: any) => {
@@ -33,18 +50,38 @@ export class RoomComponent implements OnInit {
     });
   }
 
+  handleFileInput(files: any) {
+    this.fileToUpload = files.target.files.item(0);
+    console.log(this.fileToUpload);
+    this.uploadImage(this.fileToUpload);
+    this.fileToUpload = null;
+    console.log(this.fileToUpload);
+
+    return this.toastr.success('Image sent!');
+  }
+
+  // Image upload
+  uploadImage(image: any) {
+    this.http.post('http://localhost:3000/upload', { image: image }).subscribe(res => {
+      console.log(res);
+    });
+  }
+
+  // Modal
+  openRoomCreator(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template);
+  }
+
+
   onEnterPress(event: any) {
     if (event.key === "Enter") {
-      this.sendMessage();
+      return this.sendMessage();
     }
   }
 
   sendMessage() {
     if (this.chatMessage.valid) {
-      this.messages.push({
-        body: this.chatMessage.value, author: this.myId,
-        system: false, time: new Date()
-      });
+
       this.Api.sendMessage(this.chatMessage.value);
       this.chatMessage.reset();
     }
@@ -52,25 +89,62 @@ export class RoomComponent implements OnInit {
   ngOnInit(): void {
     // Get your socket id
     this.Api.getIdentity().subscribe((id: any) => {
-      this.socketId = id;
+      this.myId = id;
     });
+
+    this.Api.setIdentity(this.roomName);
 
     // Get messages from server
     this.Api.OnRoomMessage().subscribe((data: any) => {
-      console.log(data);
+
       this.messages.push({
         body: data.msg,
         author: data.author, system: false,
-        time: new Date()
+        time: new Date(),
+        user: data.user
       });
     });
 
-    // Get list of active users
-    this.Api.listUsers().subscribe((users: any) => {
-      this.users = users;
-      console.log(this.users);
+    // User join
+    this.Api.OnUserJoined().subscribe((data: any) => {
+      if (data.id != this.myId) {
+        this.users.push(data);
+      }
+    });
+
+    // User leave
+    this.Api.OnUserLeft().subscribe((data: any) => {
+      // delete from array
+      this.users = this.users.filter(function (obj) {
+        return obj.id !== data;
+      });
+    });
+
+    this.Api.listRooms().subscribe((data: any) => {
+      this.roomList = data;
     });
 
   }
 
+  enterRoom(room_name: string) {
+    this.Api.joinRoom(room_name);
+    this.toastr.success('Joined room!', room_name);
+    return this.router.navigate(['/room', room_name]);
+  }
+
+  //Create room
+  createRoom() {
+    if (this.newRoomName) {
+      this.modalRef!.hide();
+      this.roomName = this.newRoomName;
+
+      this.toastr.success('Room Created!', this.newRoomName);
+      this.Api.joinRoom(this.newRoomName);
+
+      return this.router.navigate(['/room', this.newRoomName]);
+    }
+    else {
+      return this.toastr.error('Room name is required!', 'Error');
+    }
+  }
 }

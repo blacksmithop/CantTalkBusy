@@ -5,7 +5,7 @@
         <p class="title">Login <i class="fas fa-user-lock text-danger"></i></p>
     </div>
     <form [formGroup]="loginForm">
-        <div class="row">
+        <div class="row row-cols-1">
             <div class="col">
                 <input formControlName="username" type="text" class="text-dark text-center" name="username"
                     placeholder="Enter username">
@@ -14,13 +14,17 @@
                 <p *ngIf="!loginForm.get('username')!.errors?.required" class="text-muted">Username is <span
                         class="text-success">valid</span></p>
             </div>
+            <div class="col">
+                <input type="password" class="text-dark text-center" name="password" formControlName="password"
+                    placeholder="Enter password">
+                <p *ngIf="loginForm.get('password')!.hasError('required')" class="text-muted">Password is <span
+                        class="text-danger">required</span></p>
+                <p *ngIf="passwordValidator(loginForm)" class="text-muted">Password is <span
+                        class="text-success">accepted</span>
+            </div>
         </div>
-        <input type="password" class="text-dark text-center" name="password" formControlName="password"
-            placeholder="Enter password">
-        <p *ngIf="loginForm.get('password')!.errors?.required" class="text-muted">Password must be <span
-                class="text-danger">alphanumeric</span></p>
-        <p *ngIf="!loginForm.get('password')!.errors?.required" class="text-muted">Password is <span
-                class="text-success">accepted</span></p>
+
+
 
         <p class="text-muted" (click)="showRegister()">Click to <span class="text-primary new_account">register</span>
         </p>
@@ -39,10 +43,11 @@
             <div class="col">
                 <input formControlName="username" type="text" class="text-dark text-center" name="username"
                     placeholder="Enter username">
-                <p *ngIf="registerForm.get('username')!.errors?.required" class="text-muted">Username must be <span
-                        class="text-danger">unique</span></p>
+                <p *ngIf="registerForm.get('username')!.errors?.required" class="text-muted">Username is <span
+                        class="text-danger">required</span></p>
                 <p *ngIf="!registerForm.get('username')!.errors?.required" class="text-muted">Username is <span
-                        class="text-success">accepted</span></p>
+                        class="text-success">valid</span></p>
+
             </div>
             <div class="col">
                 <input formControlName="firstName" type="text" class="text-dark text-center" name="firstName"
@@ -80,7 +85,8 @@
                 <p *ngIf="registerForm.get('password')!.errors?.minlength" class="text-muted">Password must be atleast
                     <span class="text-danger">8 </span>characters long
                 </p>
-                <p *ngIf="passwordValidator()" class="text-muted">Password is <span class="text-success">valid</span>
+                <p *ngIf="passwordValidator(registerForm)" class="text-muted">Password is <span
+                        class="text-success">valid</span>
                 </p>
             </div>
             <div class="col">
@@ -91,15 +97,14 @@
                     Passwords must <span class="text-danger">match</span></p>
                 <p *ngIf="passwordMatch()" class="text-muted">
                     Passwords <span class="text-success">match</span></p>
-                <p *ngIf="passwordValidator() && passwordMatch()" class="text-muted">Password is <span
+                <p *ngIf="passwordValidator(registerForm) && passwordMatch()" class="text-muted">Password is <span
                         class="text-success">accepted</span>
                 </p>
             </div>
             <p class="text-muted" (click)="showLogin()">Click to <span class="text-primary new_account">Login</span></p>
 
-            <button class="btn fas fa-plug text-success mx-auto" (click)="onRegister()"
-                [disabled]="!registerForm.valid"></button>
         </div>
-
+        <button class="btn fas fa-plug text-success mx-auto" (click)="onRegister()"
+            [disabled]="!registerForm.valid"></button>
     </form>
 </div>
