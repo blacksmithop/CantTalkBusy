@@ -6,6 +6,12 @@
     border: 8px solid #141414;
 }
 
+/* Images */
+img{
+    width:300px;
+    height: 300px;
+    margin-bottom: 10px;
+}
 
 .room-name {
     text-transform: capitalize;

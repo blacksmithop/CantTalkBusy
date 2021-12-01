@@ -31,7 +31,7 @@ export class RoomComponent implements OnInit {
 
   chatMessage = new FormControl('', [Validators.maxLength(100), Validators.required]);
   messages = [{
-    body: `Welcome!`, author: 'socket_id', system: false, time: new Date(),
+    body: `Welcome!`, author: 'socket_id', system: false, time: new Date(), type: 'msg',
     user: {
       username: 'System',
     }
@@ -50,9 +50,11 @@ export class RoomComponent implements OnInit {
     });
   }
 
+  // On file upload
   handleFileInput(files: any) {
-    this.fileToUpload = files.target.files.item(0);
+    this.fileToUpload = files.target.files[0];
     console.log(this.fileToUpload);
+
     this.uploadImage(this.fileToUpload);
     this.fileToUpload = null;
     console.log(this.fileToUpload);
@@ -60,11 +62,17 @@ export class RoomComponent implements OnInit {
     return this.toastr.success('Image sent!');
   }
 
-  // Image upload
+  // Upload image to backend
   uploadImage(image: any) {
-    this.http.post('http://localhost:3000/upload', { image: image }).subscribe(res => {
+    let formData = new FormData();
+    formData.append('image_upload', image);
+    this.http.post('http://localhost:3000/upload', formData).subscribe((res: any) => {
       console.log(res);
+      this.Api.sendImage(res.url);
+      this.chatMessage.reset();
     });
+
+
   }
 
   // Modal
@@ -101,7 +109,8 @@ export class RoomComponent implements OnInit {
         body: data.msg,
         author: data.author, system: false,
         time: new Date(),
-        user: data.user
+        user: data.user,
+        type: data.type
       });
     });
 

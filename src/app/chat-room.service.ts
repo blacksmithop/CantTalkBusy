@@ -43,6 +43,10 @@ export class ChatRoomService {
     this.socket.emit('send message', message);
   }
 
+  sendImage(url: string) {
+    this.socket.emit('send image', url);
+  }
+
   // User events
   OnUserJoined() {
     return this.socket.fromEvent('user join');
