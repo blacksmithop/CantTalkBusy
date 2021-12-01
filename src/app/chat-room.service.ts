@@ -25,6 +25,12 @@ export class ChatRoomService {
     return this.socket.fromEvent('room message');
   }
 
+  // new private message (WIP)
+  OnPrivateMessage() {
+    return this.socket.fromEvent('private message');
+  }
+
+
   joinRoom(room_name: string) {
     this.socket.emit('join room', room_name);
   }
@@ -33,14 +39,15 @@ export class ChatRoomService {
     return this.socket.fromEvent('list rooms');
   }
 
-  /* system messages from server
-  OnSystemMessage() {
-    return this.socket.fromEvent('system message');
-  }*/
 
   // send message to room
   sendMessage(message: string) {
     this.socket.emit('send message', message);
+  }
+
+  // send message to user
+  sendPrivateMessage(message: string, receiver: string) {
+    this.socket.emit('send private message', { message: message, receiver: receiver });
   }
 
   sendImage(url: string) {

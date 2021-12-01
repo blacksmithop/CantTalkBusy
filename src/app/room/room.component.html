@@ -2,35 +2,63 @@
     <div class="col">
         <div class="container-fluid room bg-dark">
             <div class="btn-group" dropdown>
-                <button id="button-basic" dropdownToggle type="button" class="btn" aria-controls="dropdown-basic">
-                    <i class="fas fa-bars text-light"></i><span class="caret"></span>
-                </button>
+                <button id="button-basic" dropdownToggle type="button" class="btn" aria-controls="dropdown-basic"> <i
+                        class="fas fa-bars text-light"></i><span class="caret"></span> </button>
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
                     <div *ngFor="let room of roomList">
                         <li role="menuitem"><a class="btn dropdown-item" (click)="enterRoom(room)">{{room}}</a></li>
                     </div>
                 </ul>
             </div>
-            <!--Room info-->
-            <i (click)="openRoomCreator(template)" class="btn fas fa-plus-circle text-success"></i>
+            <!--Room info--><i (click)="openRoomCreator(template)" class="btn fas fa-plus-circle text-success"></i>
             <ng-template #template>
                 <div class="modal-header">
                     <h4 class="modal-title pull-left">Create a room</h4>
                     <button type="button" class="btn-close close pull-right" aria-label="Close"
-                        (click)="modalRef?.hide()">
-                        <span aria-hidden="true" class="visually-hidden">&times;</span>
+                        (click)="modalRef?.hide()"> <span aria-hidden="true" class="visually-hidden">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input [(ngModel)]="newRoomName" placeholder="Name your room">
-                    <i class="btn far fa-check-circle text-success" (click)="createRoom()"></i>
+                    <input [(ngModel)]="newRoomName" placeholder="Name your room"> <i
+                        class="btn far fa-check-circle text-success" (click)="createRoom()"></i>
                 </div>
             </ng-template>
-
+            <!--Private chat-->
+            <ng-template #chat_template>
+                <div class="modal-header">
+                    <h4 class="modal-title pull-left">Chat</h4>
+                    <button type="button" class="btn-close close pull-right" aria-label="Close"
+                        (click)="chatModalRef?.hide()"> <span aria-hidden="true" class="visually-hidden">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="messages_list">
+                            <ul class="list-group mb-3" *ngFor="let msg of private_messages">
+                                <div class="container message_box">
+                                    <li class="text-right message bg-success" *ngIf="msg.author==myId
+                                    && msg.type == 'msg'"> {{msg.body}} </li>
+                                    <li class="text-left message bg-danger" *ngIf="msg.author!=myId && msg.type == 'msg'
+                                    && msg.user.username!='System'"> {{msg.body}} </li>
+                                    <li class="text-left message bg-primary" *ngIf="msg.user.username=='System'
+                                    "> {{msg.body}} </li>
+                                    <div *ngIf="msg.type == 'image'"> <img [src]="msg.body" alt=""> </div>
+                                    <p class="ml-2">{{msg.time | date:'shortTime'}}</p>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="chat_box">
+                        <input type="text" class="chat_input" [formControl]="privateMessage">
+                        <!--Send--><i class="btn fas fa-paper-plane rounded-circle text-danger"
+                            (click)="sendPrivateMessage()"></i>
+                    </div>
+                </div>
+            </ng-template>
+            <!--End-->
             <div class="room_info">
                 <p class="room-name">Room: {{roomName}}</p>
             </div>
-
             <!--Message list-->
             <div class="messages_list">
                 <ul class="list-group" *ngFor="let msg of messages">
@@ -38,43 +66,27 @@
                         <div class="btn-group" dropdown *ngIf="msg.author!=myId
                         && msg.user.username!='System'">
                             <button id="button-basic" dropdownToggle type="button" class="btn"
-                                aria-controls="dropdown-basic">
-                                <i class="fas fa-bars text-light"></i>
-                            </button>
+                                aria-controls="dropdown-basic"> <i class="fas fa-bars text-light"></i> </button>
                             <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu">
-                                <li role="menuitem"><a class="btn dropdown-item">Message</a></li>
+                                <li role="menuitem"><a (click)="openPrivateChat(chat_template, msg.author)"
+                                        class="btn dropdown-item">Message</a></li>
                                 <li role="menuitem"><a class="btn dropdown-item">Forward</a></li>
                             </ul>
                             <p class="text-light mr-2">{{msg.user.username}}:</p>
-
                         </div>
                         <li class="text-right message bg-success" *ngIf="msg.author==myId
-                        && msg.type == 'msg'">
-                            {{msg.body}}
-                        </li>
+                        && msg.type == 'msg'"> {{msg.body}} </li>
                         <li class="text-left message bg-danger" *ngIf="msg.author!=myId && msg.type == 'msg'
-                        && msg.user.username!='System'">
-                            {{msg.body}}
-                        </li>
-                        <li class="text-left message bg-primary" *ngIf="msg.user.username=='System'
-                        ">
-                            {{msg.body}}
-                        </li>
-
-                        <div *ngIf="msg.type == 'image'">
-                            <img [src]="msg.body" alt="">
-                        </div>
+                        && msg.user.username!='System'"> {{msg.body}} </li>
+                        <li class="text-left message bg-primary" *ngIf="msg.user.username=='System'"> {{msg.body}} </li>
+                        <div *ngIf="msg.type == 'image'"> <img [src]="msg.body" alt=""> </div>
                         <p class="ml-2 text-light">{{msg.time | date:'shortTime'}}</p>
                     </div>
-
-
                 </ul>
             </div>
-
             <div class="chat_box">
                 <input type="text" class="chat_input mr-2" [formControl]="chatMessage" (keydown)="onEnterPress($event)">
-                <!--Send-->
-                <i class="btn fas fa-paper-plane rounded-circle text-danger" (click)="sendMessage()"></i>
+                <!--Send--><i class="btn fas fa-paper-plane rounded-circle text-danger" (click)="sendMessage()"></i>
                 <!--image upload-->
                 <input id="upload" type="file" (change)="handleFileInput($event)" accept="image/*" hidden>
                 <label for="upload" class="btn fas fa-images text-success rounded-circle"></label>
@@ -87,23 +99,21 @@
             <div class="row">
                 <div class="col">
                     <!--Contact box-->
-                    <div class="container-fluid person-list">
-                        <i class="fas fa-comments text-success"></i>
+                    <div class="container-fluid person-list"> <i class="fas fa-comments text-success"></i>
                         <p class="h4 text-light">Online:</p>
                         <!--contact list-->
                         <div class="row" *ngFor="let user of users">
                             <div class="col">
-                                <div class="person">
-                                    <img src="https://www.bootdey.com/img/Content/user_1.jpg" alt="Profile image"
-                                        class="rounded-circle">
+                                <div class="person"> <img src="https://www.bootdey.com/img/Content/user_1.jpg"
+                                        alt="Profile image" class="rounded-circle">
                                     <div class="person-info ml-5">
                                         <p class="person-name">{{user.identity.firstName}}</p>
                                         <p class="person-name">{{user.identity.lastName}}</p>
                                         <!-- Contact options-->
                                         <div class="btn-group" dropdown>
                                             <button id="button-basic" dropdownToggle type="button" class="btn"
-                                                aria-controls="dropdown-basic">
-                                                <i class="fas fa-bars text-light"></i><span class="caret"></span>
+                                                aria-controls="dropdown-basic"> <i
+                                                    class="fas fa-bars text-light"></i><span class="caret"></span>
                                             </button>
                                             <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
                                                 aria-labelledby="button-basic">
@@ -112,12 +122,10 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <p class="user-truncated">
-                                    </p>
+                                    <p class="user-truncated"> </p>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

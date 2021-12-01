@@ -20,22 +20,35 @@ export class RoomComponent implements OnInit {
   @Input() roomList!: [];
 
   myId!: string;
+  receiver_id!: string;
   // list of users in room
   users: any[] = [];
   // Create room Modal
   modalRef?: BsModalRef;
+  // Private chat Modal
+  chatModalRef?: BsModalRef;
   // Create room input
   @Input() newRoomName!: string;
   // File upload
   fileToUpload: File | null = null;
 
-  chatMessage = new FormControl('', [Validators.maxLength(100), Validators.required]);
+  chatMessage = new FormControl('', [Validators.required]);
+  privateMessage = new FormControl('', [Validators.required]);
+
   messages = [{
     body: `Welcome!`, author: 'socket_id', system: false, time: new Date(), type: 'msg',
     user: {
       username: 'System',
     }
   }]
+
+  private_messages = [{
+    body: `Welcome!`, author: 'socket_id', system: false, time: new Date(), type: 'msg',
+    user: {
+      username: 'System',
+    }
+  }];
+
   constructor(private Api: ChatRoomService,
     private route: ActivatedRoute,
     private router: Router,
@@ -80,12 +93,34 @@ export class RoomComponent implements OnInit {
     this.modalRef = this.modalService.show(template);
   }
 
+  openPrivateChat(template: TemplateRef<any>, id: string) {
+    this.receiver_id = id;
+    this.chatModalRef = this.modalService.show(template);
+  }
+
+  sendPrivateMessage() {
+    console.log(this.privateMessage.valid);
+    if (this.privateMessage.valid) {
+
+      this.Api.sendPrivateMessage(this.privateMessage.value, this.receiver_id);
+      this.private_messages.push({
+        body: this.privateMessage.value,
+        author: this.myId, system: false,
+        time: new Date(),
+        user: { username: 'You' },
+        type: 'msg'
+      });
+      this.privateMessage.reset();
+    }
+  }
+
 
   onEnterPress(event: any) {
     if (event.key === "Enter") {
       return this.sendMessage();
     }
   }
+
 
   sendMessage() {
     if (this.chatMessage.valid) {
@@ -113,6 +148,19 @@ export class RoomComponent implements OnInit {
         type: data.type
       });
     });
+
+    this.Api.OnPrivateMessage().subscribe((data: any) => {
+      console.log(data);
+
+      this.private_messages.push({
+        body: data.msg,
+        author: data.author, system: false,
+        time: new Date(),
+        user: data.user,
+        type: data.type
+      });
+    });
+
 
     // User join
     this.Api.OnUserJoined().subscribe((data: any) => {
