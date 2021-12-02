@@ -1,0 +1,22 @@
+/* Room, user list */
+.room {
+    width: 50vw;
+    height: 75vh;
+    border: 8px solid #141414;
+    border-radius: 25px;
+}
+
+.room-name {
+    text-transform: capitalize;
+    font-size: 30px;
+}
+.room_info {
+    display: flex;
+    width: 100%;
+    color: white;
+    border-bottom: 5px solid #141414;
+    margin-bottom: 10px;
+}
+.fa-plus-circle{
+    font-size: 30px;
+}

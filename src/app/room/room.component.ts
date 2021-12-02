@@ -7,10 +7,17 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient } from '@angular/common/http';
 
+interface Message {
+  body: string, author: string, system: boolean, time: Date, type: string,
+  user: {
+    username: string
+  }
+}
+
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.css'],
+  styleUrls: ['./room.css', './users.css', './message.css'],
   providers: [{ provide: BsDropdownConfig, useValue: { isAnimated: true, autoClose: true } }]
 })
 export class RoomComponent implements OnInit {
@@ -35,19 +42,11 @@ export class RoomComponent implements OnInit {
   chatMessage = new FormControl('', [Validators.required]);
   privateMessage = new FormControl('', [Validators.required]);
 
-  messages = [{
-    body: `Welcome!`, author: 'socket_id', system: false, time: new Date(), type: 'msg',
-    user: {
-      username: 'System',
-    }
-  }]
+  messages: Message[] = [];
 
-  private_messages = [{
-    body: `Welcome!`, author: 'socket_id', system: false, time: new Date(), type: 'msg',
-    user: {
-      username: 'System',
-    }
-  }];
+  private_messages: {
+    [key: string]: Message[]
+  } = {};
 
   constructor(private Api: ChatRoomService,
     private route: ActivatedRoute,
@@ -57,53 +56,53 @@ export class RoomComponent implements OnInit {
     private toastr: ToastrService) {
     this.roomName = this.route.snapshot.paramMap.get('roomName')!;
 
+    // Get socket id (self)
     this.Api.getIdentity().subscribe((id: any) => {
-      // get your Id
       this.myId = id;
     });
   }
 
-  // On file upload
+  // File upload
   handleFileInput(files: any) {
     this.fileToUpload = files.target.files[0];
-    console.log(this.fileToUpload);
 
     this.uploadImage(this.fileToUpload);
     this.fileToUpload = null;
-    console.log(this.fileToUpload);
 
     return this.toastr.success('Image sent!');
   }
 
-  // Upload image to backend
+  // Send image to backend
   uploadImage(image: any) {
     let formData = new FormData();
     formData.append('image_upload', image);
     this.http.post('http://localhost:3000/upload', formData).subscribe((res: any) => {
-      console.log(res);
       this.Api.sendImage(res.url);
       this.chatMessage.reset();
     });
 
-
   }
 
-  // Modal
+  // Room creator Modal
   openRoomCreator(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template);
   }
 
+  // Private chat Modal
   openPrivateChat(template: TemplateRef<any>, id: string) {
     this.receiver_id = id;
+    if (this.receiver_id in this.private_messages) {
+    }
+    else {
+      this.private_messages[this.receiver_id] = [];
+    }
     this.chatModalRef = this.modalService.show(template);
   }
 
   sendPrivateMessage() {
-    console.log(this.privateMessage.valid);
     if (this.privateMessage.valid) {
-
       this.Api.sendPrivateMessage(this.privateMessage.value, this.receiver_id);
-      this.private_messages.push({
+      this.private_messages[this.receiver_id].push({
         body: this.privateMessage.value,
         author: this.myId, system: false,
         time: new Date(),
@@ -150,9 +149,13 @@ export class RoomComponent implements OnInit {
     });
 
     this.Api.OnPrivateMessage().subscribe((data: any) => {
-      console.log(data);
+      if (this.receiver_id in this.private_messages) {
+      }
+      else {
+        this.private_messages[this.receiver_id] = [];
+      }
 
-      this.private_messages.push({
+      this.private_messages[this.receiver_id].push({
         body: data.msg,
         author: data.author, system: false,
         time: new Date(),

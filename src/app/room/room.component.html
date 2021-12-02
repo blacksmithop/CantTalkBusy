@@ -1,4 +1,4 @@
-<div class="row row-cols-2">
+<div class="row row-cols-auto">
     <div class="col">
         <div class="container-fluid room bg-dark">
             <div class="btn-group" dropdown>
@@ -34,7 +34,7 @@
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="messages_list">
-                            <ul class="list-group mb-3" *ngFor="let msg of private_messages">
+                            <ul class="list-group mb-3" *ngFor="let msg of this.private_messages[this.receiver_id]">
                                 <div class="container message_box">
                                     <li class="text-right message bg-success" *ngIf="msg.author==myId
                                     && msg.type == 'msg'"> {{msg.body}} </li>
@@ -95,7 +95,7 @@
     </div>
     <div class="col">
         <!--Room users list-->
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <div class="col">
                     <!--Contact box-->
@@ -117,7 +117,8 @@
                                             </button>
                                             <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu"
                                                 aria-labelledby="button-basic">
-                                                <li role="menuitem"><a class="btn dropdown-item" href="#">Chat</a></li>
+                                                <li role="menuitem"><a class="btn dropdown-item"
+                                                        (click)="openPrivateChat(chat_template, user.id)">Chat</a></li>
                                                 <li role="menuitem"><a class="btn dropdown-item" href="#">Block</a></li>
                                             </ul>
                                         </div>
