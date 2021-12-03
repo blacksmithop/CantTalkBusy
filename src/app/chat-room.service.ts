@@ -45,13 +45,36 @@ export class ChatRoomService {
     this.socket.emit('send message', message);
   }
 
+  // PM's only
+  loadMessageHistory(receiver: string) {
+    this.socket.emit('send private message', receiver);
+  }
   // send message to user
-  sendPrivateMessage(message: string, receiver: string) {
-    this.socket.emit('send private message', { message: message, receiver: receiver });
+  sendPrivateMessage(message: string, receiver: string, username: string) {
+    this.socket.emit('send private message', { message: message, receiver: receiver, username: username });
   }
 
   sendImage(url: string) {
     this.socket.emit('send image', url);
+  }
+
+
+  onGiveIdentity() {
+    return this.socket.fromEvent('request identity');
+  }
+
+  requestIdentity(id: string) {
+    this.socket.emit('find user', id);
+  }
+
+  receiveIdentity(id: string) {
+    return this.socket.fromEvent('give identity');
+  }
+
+  identifyToRequest(id: string) {
+    const session = JSON.parse(sessionStorage.getItem('session')!);
+    session.id = id;
+    this.socket.emit('identify as', session);
   }
 
   // User events

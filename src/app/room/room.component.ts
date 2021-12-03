@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { BsDropdownConfig } from 'ngx-bootstrap/dropdown';
 import { FormControl, Validators } from '@angular/forms';
 import { ChatRoomService } from '../chat-room.service';
@@ -28,6 +28,8 @@ export class RoomComponent implements OnInit {
 
   myId!: string;
   receiver_id!: string;
+  // User you're in PM with
+  private_chat_user!: any;
   // list of users in room
   users: any[] = [];
   // Create room Modal
@@ -53,6 +55,7 @@ export class RoomComponent implements OnInit {
     private router: Router,
     private modalService: BsModalService,
     private http: HttpClient,
+    private changeDetection: ChangeDetectorRef,
     private toastr: ToastrService) {
     this.roomName = this.route.snapshot.paramMap.get('roomName')!;
 
@@ -91,17 +94,28 @@ export class RoomComponent implements OnInit {
   // Private chat Modal
   openPrivateChat(template: TemplateRef<any>, id: string) {
     this.receiver_id = id;
+    // Get other user's identity
+    this.Api.requestIdentity(this.receiver_id);
+
+
     if (this.receiver_id in this.private_messages) {
     }
     else {
       this.private_messages[this.receiver_id] = [];
+
+      //Load chat history
+      //this.Api.loadMessageHistory(this.receiver_id);
     }
+
     this.chatModalRef = this.modalService.show(template);
   }
 
   sendPrivateMessage() {
     if (this.privateMessage.valid) {
-      this.Api.sendPrivateMessage(this.privateMessage.value, this.receiver_id);
+
+      console.log(this.private_chat_user);
+
+      this.Api.sendPrivateMessage(this.privateMessage.value, this.receiver_id, this.private_chat_user.username);
       this.private_messages[this.receiver_id].push({
         body: this.privateMessage.value,
         author: this.myId, system: false,
@@ -164,11 +178,21 @@ export class RoomComponent implements OnInit {
       });
     });
 
+    // On identity request
+    this.Api.onGiveIdentity().subscribe((id: any) => {
+      this.Api.identifyToRequest(id);
+    });
+
+    this.Api.getIdentity().subscribe((data: any) => {
+      this.private_chat_user = data;
+    });
 
     // User join
     this.Api.OnUserJoined().subscribe((data: any) => {
       if (data.id != this.myId) {
         this.users.push(data);
+        console.log(this.users);
+        this.changeDetection.detectChanges();
       }
     });
 
@@ -178,6 +202,9 @@ export class RoomComponent implements OnInit {
       this.users = this.users.filter(function (obj) {
         return obj.id !== data;
       });
+      console.log(this.users);
+
+      this.changeDetection.detectChanges();
     });
 
     this.Api.listRooms().subscribe((data: any) => {
@@ -207,4 +234,5 @@ export class RoomComponent implements OnInit {
       return this.toastr.error('Room name is required!', 'Error');
     }
   }
+
 }

@@ -1,8 +1,8 @@
 /* List of users */
 .person-list {
     background-color: rgb(5, 5, 5);
-    width: fit-content;
-    height: fit-content;
+    width: 250px;
+    height: 50vh;
     border-radius: 25px;
     overflow-y: scroll;
     overflow-x: hidden;
