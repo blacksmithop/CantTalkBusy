@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient } from '@angular/common/http';
+import { Howl, Howler } from 'howler';
 
 interface Message {
   body: string, author: string, system: boolean, time: Date, type: string,
@@ -102,6 +103,12 @@ export class RoomComponent implements OnInit {
     }
     else {
       this.private_messages[this.receiver_id] = [];
+      var sound = new Howl({
+        src: ['https://a.tumblr.com/tumblr_r3sa28Av9p1yycg8ao1.mp3']
+      });
+      // Play the sound.
+      sound.play();
+      this.toastr.success('New message! 📩', this.receiver_id);
 
       //Load chat history
       //this.Api.loadMessageHistory(this.receiver_id);
